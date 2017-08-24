@@ -11,7 +11,7 @@ CELERY_RESULT_BACKEND='redis://localhost:6379'
 CELERYBEAT_SCHEDULE = {
     'toggleLights': {
         'task': 'toggleLightsTask',
-        'schedule': timedelta(seconds=5)
+        'schedule': timedelta(seconds=15)
     },
 }
 
