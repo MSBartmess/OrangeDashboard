@@ -1,0 +1,105 @@
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBI_gUulPeAwmflBnrDNmRYF5Vu5VsXxf4&callback=initMap" type="text/javascript"></script>
+{% include "mapStyleJSON.html" %}
+<script type="text/javascript">
+	//GoogleMaps API Key: AIzaSyBI_gUulPeAwmflBnrDNmRYF5Vu5VsXxf4
+	var map;
+	var mapIsReady = false;
+	var busArray = [];
+	function initMap() {
+		// 40.114364, -88.233791
+		var mapCenter = {lat:40.110297, lng:-88.232069};
+		map = new google.maps.Map(document.getElementById('busMap'), {
+			center: mapCenter,
+			zoom: 15,
+			disableDefaultUI: true
+		});
+		//40.114364, -88.233791
+		var styledMapType = new google.maps.StyledMapType(mapStyle);
+		map.mapTypes.set('styled_map', styledMapType);
+        map.setMapTypeId('styled_map');
+        var stopMarker = new google.maps.Marker({				      
+			map: map,
+		    position: {lat: 40.114364, lng: -88.233791},
+	    });
+        mapIsReady = true;
+        updateBuses();
+	}
+
+	function updateBuses(){
+		//This function does the JSON call for the Approaching buses, and then plots them on the map
+		console.log(mapIsReady)
+		if(mapIsReady){
+			console.log("Updating Buses")
+			var url = 'https://developer.cumtd.com/api/v2.2/json/getdeparturesbystop'
+			var apiKey = 'fa033289945c4af587b0e1799c5e9040'
+			var stopIDString = "WHT4TH:3"
+			$.get(
+				url,
+				{key: apiKey,
+				 stop_id: stopIDString,
+				 pt: 30,
+				 count: 7,
+				},
+				function(response){
+					console.log(response)
+					busArray.forEach(function(bus){
+						bus.setMap(null);
+					})
+					$("#busTableBody").html("")
+					response.departures.forEach(function(departure, index){
+						console.log(departure.headsign + " " + departure.expected_mins)
+					    $("#busTableBody").append("<tr><td>"+departure.headsign+"</td><td>"+departure.expected_mins+"</tr>")
+					   	
+					   	// Add the circle for this city to the map.
+					    var busMarker = new google.maps.Marker({
+					      	icon: {
+								path: "M-30,0a30,30 0 1,0 60,0a30,30 0 1,0 -60,0",
+								scale: 0.25,
+								strokeWeight: 0.2,
+								strokeColor: busColors[departure.route.route_short_name],
+								strokeOpacity: 1,
+								fillColor: busColors[departure.route.route_short_name],
+								fillOpacity: 0.9,
+								rotation: 0
+							},					      
+							map: map,
+						    position: {lat: departure.location.lat, lng: departure.location.lon},
+					    });
+					    busArray.push(busMarker)
+					})
+				}
+			)
+		}
+	}
+
+	$(function(){
+		setInterval(updateBuses,30000);
+	});
+</script>
+<style type="text/css">
+	#busMap {
+    	height: 100%;
+    }
+</style>
+<h4 class="height5" style="padding-left:1.5em">Bus Schedule:</h4>
+<div class="uk-grid-collapse height95" uk-grid>
+	<!-- List for arriving buses and their estimated arrival time -->
+	<div class="uk-width-1-3 fullHeight" id="busList">
+		<table class="uk-table">
+			<thead>
+			<tr>
+			<th>Bus:</th>
+			<th>ETA:</th>
+			</tr>
+			</thead>
+			<tbody id="busTableBody">
+				
+			</tbody>
+			
+		</table>
+	</div>
+	<!-- Map of the bus locations -->
+	<div class="uk-width-2-3 fullHeight" id="busMap">
+
+	</div>
+</div>

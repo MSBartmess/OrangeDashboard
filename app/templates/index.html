@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+	<style type="text/css">
+	 .topHalf {
+        height: 50%;
+      }
+      .botHalf {
+        height: 50%;
+      }
+      /*#busTimeViewer, #smarthomeViewer {
+      	padding: 5px;
+      	margin: 0px;
+      };*/
+	</style>
+    <div class="uk-grid-small uk-child-width-1-2 topHalf" uk-grid>
+    	<div id="busTimeViewer" class="fullHeight uk-card uk-card-default">{% include "busTimeViewer.html" %}</div>
+    	<div id="smartHomeViewer" class="fullHeight uk-card uk-card-default">{% include "smartHomeViewer.html" %}</div>
+    </div>
+    <div class="uk-grid-collapse uk-child-width-1-2 botHalf" uk-grid>
+    	<div id="scheduleViewer">{% include "scheduleViewer.html" %}</div>
+    	<div id="weatherViewer">{% include "weatherViewer.html" %}</div>
+    </div>
+{% endblock %}
