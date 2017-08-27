@@ -41,6 +41,6 @@ def checkApartment():
 		print room, len([val for val in newRoomHist if val==True])*1.0/len(newRoomHist)
 		newRoomHistory[room] = newRoomHist
 	apartmentHistory["roomHistory"] = newRoomHistory
-	print newRoomHistory
+	#print newRoomHistory
 
 	pickle.dump(apartmentHistory,open( "apartmentHistory.pkl", "wb" ))

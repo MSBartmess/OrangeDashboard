@@ -6,7 +6,6 @@ MAC_ADDRESS_DICT = {'fc:a6:67:bd:22:a2':"Jacob's Room",
 					} # enter Dash Button's MAC Address here.
 
 def detect_button(pkt):
-	print "Packet Found"
 	if pkt.haslayer(DHCP):
 		b = Bridge('192.168.1.103')
 		b.connect()
