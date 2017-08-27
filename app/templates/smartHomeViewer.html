@@ -2,65 +2,70 @@
 <script type="text/javascript">
 	$(function(){
 		//setInterval(updateBuses,30000);
-		updateLightChart()
+		updateLightChart();
+		setInterval(updateLightChart,15000);
 	});
 
 	function updateLightChart(){
-		data = [{room:"Mike",utilization:50},
-				{room:"Conor",utilization:42},
-				{room:"Matt",utilization:60},
-				{room:"Jacob",utilization:41},
-				{room:"Common",utilization:54}]
-		$("#lightSvg").height($("#lightOnDiv").height()*2)
-		var svg = d3.select("#lightSvg"),
-		    margin = {top: 5, right: 20, bottom: 50, left: 40},
-		    width = +$("#lightSvg").width() - margin.left - margin.right,
-		    height = +$("#lightSvg").height() - margin.top - margin.bottom;
+		url = "/getSmarthomeData"
 
-		var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
-		    y = d3.scaleLinear().rangeRound([height, 0]);
+		$.get(url,function(json){
+			console.log("Success")
+			console.log(json)
+			console.log(JSON.parse(json))
+			data = JSON.parse(json).apartmentHistory
+			console.log(data)
+			$("#lightSvg").height($("#lightOnDiv").height()*2)
+			var svg = d3.select("#lightSvg"),
+			    margin = {top: 5, right: 20, bottom: 50, left: 40},
+			    width = +$("#lightSvg").width() - margin.left - margin.right,
+			    height = +$("#lightSvg").height() - margin.top - margin.bottom;
 
-		var g = svg.append("g")
-		    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+			    y = d3.scaleLinear().rangeRound([height, 0]);
 
-		// d3.tsv("data.tsv", function(d) {
-		// 	d.frequency = +d.frequency;
-		// 	return d;
-		// }, function(error, data) {
-		  // if (error) throw error;
+			var g = svg.append("g")
+			    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-		  x.domain(data.map(function(d) { return d.room; }));
-		  y.domain([0, 100]);
+			// d3.tsv("data.tsv", function(d) {
+			// 	d.frequency = +d.frequency;
+			// 	return d;
+			// }, function(error, data) {
+			  // if (error) throw error;
 
-		  g.append("g")
-		      .attr("class", "axis axis--x")
-		      .attr("transform", "translate(0," + height + ")")
-		      .call(d3.axisBottom(x))
-		      .selectAll("text")	
-		        .style("text-anchor", "end")
-		        .attr("dx", "-.8em")
-		        .attr("dy", ".15em")
-		        .attr("transform", "rotate(-65)")
+			  x.domain(data.map(function(d) { return d.room; }));
+			  y.domain([0, 100]);
 
-		  g.append("g")
-		      .attr("class", "axis axis--y")
-		      .call(d3.axisLeft(y))
-		    .append("text")
-		      .attr("transform", "rotate(-90)")
-		      .attr("y", 6)
-		      .attr("dy", "0.71em")
-		      .attr("text-anchor", "end")
-		      .text("Frequency");
+			  g.append("g")
+			      .attr("class", "axis axis--x")
+			      .attr("transform", "translate(0," + height + ")")
+			      .call(d3.axisBottom(x))
+			      .selectAll("text")	
+			        .style("text-anchor", "end")
+			        .attr("dx", "-.8em")
+			        .attr("dy", ".15em")
+			        .attr("transform", "rotate(-65)")
 
-		  g.selectAll(".bar")
-		    .data(data)
-		    .enter().append("rect")
-		      .attr("class", "bar")
-		      .attr("x", function(d) { return x(d.room); })
-		      .attr("y", function(d) { return y(d.utilization); })
-		      .attr("fill","teal")
-		      .attr("width", x.bandwidth())
-		      .attr("height", function(d) { return height - y(d.utilization); });
+			  g.append("g")
+			      .attr("class", "axis axis--y")
+			      .call(d3.axisLeft(y))
+			    .append("text")
+			      .attr("transform", "rotate(-90)")
+			      .attr("y", 6)
+			      .attr("dy", "0.71em")
+			      .attr("text-anchor", "end")
+			      .text("Frequency");
+
+			  g.selectAll(".bar")
+			    .data(data)
+			    .enter().append("rect")
+			      .attr("class", "bar")
+			      .attr("x", function(d) { return x(d.room); })
+			      .attr("y", function(d) { return y(d.utilization); })
+			      .attr("fill","teal")
+			      .attr("width", x.bandwidth())
+			      .attr("height", function(d) { return height - y(d.utilization); });
+		});
 		// });
 
 	}

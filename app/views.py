@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, flash, redirect
 from .forms import LoginForm
-
+import json
 '''
 Things that need to be done:
 Bus Route Viewer
@@ -23,19 +23,18 @@ Smart Home Status
 @app.route('/')
 @app.route('/index')
 def index():
-	user = {'nickname': 'Miguel'}  # fake user
-	posts = [  # fake array of posts
-        { 
-            'author': {'nickname': 'John'}, 
-            'body': 'Beautiful day in Portland!' 
-        },
-        { 
-            'author': {'nickname': 'Susan'}, 
-            'body': 'The Avengers movie was so cool!' 
-        }
-    ]
-	return render_template('index.html',title='Home',posts=posts,user=user)
+	return render_template('index.html')
 
+@app.route('/getSmarthomeData')
+def getSmarthomeData():
+  try:
+    apartmentHistory = pickle.load(open( "../apartmentHistory.pkl", "rb" ))
+  except:
+    return "Failure"
+  print apartmentHistory
+  for room in apartmentHistory["roomHistory"]:
+    apartmentHistory["roomHistory"][room] = len([val for val in newRoomHist if val==True])*1.0/len(newRoomHist)
+  return json.dumps(apartmentHistory)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
