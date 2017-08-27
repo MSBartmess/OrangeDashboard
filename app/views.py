@@ -2,6 +2,7 @@ from app import app
 from flask import render_template, flash, redirect
 from .forms import LoginForm
 import json
+import pickle
 '''
 Things that need to be done:
 Bus Route Viewer
@@ -28,12 +29,13 @@ def index():
 @app.route('/getSmarthomeData')
 def getSmarthomeData():
   try:
-    apartmentHistory = pickle.load(open( "../apartmentHistory.pkl", "rb" ))
+    apartmentHistory = pickle.load(open( "apartmentHistory.pkl", "rb" ))
   except:
     return "Failure"
-  print apartmentHistory
+  listVers = []
   for room in apartmentHistory["roomHistory"]:
-    apartmentHistory["roomHistory"][room] = len([val for val in newRoomHist if val==True])*1.0/len(newRoomHist)
+    listVers.append({"room":room,"utilization":len([val for val in apartmentHistory["roomHistory"][room] if val==True])*1.0/len(apartmentHistory["roomHistory"][room])})
+  apartmentHistory["roomHistory"]=listVers
   return json.dumps(apartmentHistory)
 
 @app.route('/login', methods=['GET', 'POST'])

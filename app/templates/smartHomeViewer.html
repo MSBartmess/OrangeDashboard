@@ -10,14 +10,12 @@
 		url = "/getSmarthomeData"
 
 		$.get(url,function(json){
-			console.log("Success")
-			console.log(json)
-			console.log(JSON.parse(json))
-			data = JSON.parse(json).apartmentHistory
+console.log(json)
+			data = JSON.parse(json).roomHistory
 			console.log(data)
-			$("#lightSvg").height($("#lightOnDiv").height()*2)
+			$("#lightSvg").height($("#lightOnDiv").height()*.8)
 			var svg = d3.select("#lightSvg"),
-			    margin = {top: 5, right: 20, bottom: 50, left: 40},
+			    margin = {top: 5, right: 20, bottom: 100, left: 40},
 			    width = +$("#lightSvg").width() - margin.left - margin.right,
 			    height = +$("#lightSvg").height() - margin.top - margin.bottom;
 
@@ -61,10 +59,10 @@
 			    .enter().append("rect")
 			      .attr("class", "bar")
 			      .attr("x", function(d) { return x(d.room); })
-			      .attr("y", function(d) { return y(d.utilization); })
+			      .attr("y", function(d) { return y(d.utilization*100); })
 			      .attr("fill","teal")
 			      .attr("width", x.bandwidth())
-			      .attr("height", function(d) { return height - y(d.utilization); });
+			      .attr("height", function(d) { return height - y(d.utilization*100); });
 		});
 		// });
 
